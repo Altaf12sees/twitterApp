@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %}
+
+<section>
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12 col-centered">
+        <h1 class="mt-5 mb-3">Create New Tweet</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 offset-md-3 mt-3">
+        <form method="post" action="{% url 'create_tweets' %}">
+          {% csrf_token %} 
+          <div class="form-group">
+            Type your tweet here. <br>
+            <textarea rows = "10" cols = "60" type="text" name="tweet_body" class="form-control" required ></textarea>
+            <input type="text" name="user" value="{{login_user.id}}" hidden >
+          </div>
+          <button type="submit" class="btn btn-primary mt-2">Tweet</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

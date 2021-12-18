@@ -1,0 +1,83 @@
+{% extends 'base.html' %} 
+{% block content %}
+<section>
+  <div class="container">
+    <div class="row">
+      <!-- first col -->
+      <div class="col-md-3 col-centered">
+        <div>
+          Logged-in User <h5> <b>{{login_user.username}}</b></h5><hr>
+          <a href="{% url 'create_tweets' %}" class="btn btn-info">Create New Tweet</a><br><br>
+          <a href="{% url 'get_liked_tweets' %}" class="btn btn-info">Liked Tweets</a><br><br>
+          <a href="{% url 'search_tweets' %}" class="btn btn-info">Search Tweets</a><br><br>
+          <a href="{% url 'logout' %}" class="btn btn-dark">Logout</a>
+        </div>
+      </div>
+
+      <!-- 2nd col -->
+      <div class="col-md-6 col-centered mt-4">
+        <b>Your Timeline View</b><br><hr>
+
+        {% for i in get_tweets %}
+            {% if i.user == login_user%}
+              <b>{{i.user}}</b> <span style="font-size: small; font-style: italic;">{{i.created_date|date:"M d, Y"}}</span> <br><span class="blockquote">{{i.tweet_body}}</span><br>
+              <form method="POST" action="{% url 'save_tweet_likes' %}">
+                {% csrf_token %} 
+                <input type="text" name="tweet" value="{{i.id}}" hidden>
+                <input type="text" name="like_by" value="{{login_user.id}}" hidden>
+                <button id="like_btn{{i.id}}" class="btn btn-primary rounded-circle" type="submit">Like</button>
+              </form>
+              <br><hr>
+              {%endif%}{%endfor%}
+
+          {% for i in get_tweets %}
+            {% for j in get_followers_list %}
+              {% if i.user == j.user %}
+                <b>{{i.user}}</b> <span style="font-size: small; font-style: italic;">{{i.created_date|date:"M d, Y"}}</span> <br><span class="blockquote">{{i.tweet_body}}</span><br>
+                <form method="POST" action="{% url 'save_tweet_likes' %}">
+                  {% csrf_token %} 
+                  <input type="text" name="tweet" value="{{i.id}}" hidden>
+                  <input type="text" name="like_by" value="{{login_user.id}}" hidden>
+                  <button id="like_btn{{i.id}}" class="btn btn-primary rounded-circle" type="submit">Like</button>
+                </form>
+                <br><hr>
+              {%endif%}
+            {%endfor%} 
+        {%endfor%}
+      </div>
+
+      <!-- col-3 -->
+      <div class="mt-4 mb-3 col-md-3">
+        <span>Suggest for follow</span><hr>
+          {% for i in user_list %}
+              {% if i.id != login_user.id %}
+            <form method="post" action="{% url 'add_followers' %}">
+              {% csrf_token %} 
+              <div class="form-group">
+                <input type="text" value="{{i.id}}" name="user" hidden/>
+                <input type="text" name="follower" value="{{login_user.id}}" hidden >
+              </div>
+              <div id= "follow_btn{{i.id}}">
+                <button type="submit" id="btn_fl{{i.id}}" class="btn btn-primary rounded-circle" >Follow</button>
+                <b>_ {{i.username}}</b><br><br>
+              </div>
+            </form>
+            <script>
+              checkFollower('{{i.username}}', '{{i.id}}')
+              function checkFollower(u,d){
+                "{% for j in get_followers_list %}"
+                if(u === '{{j.user}}'){
+                  document.getElementById('follow_btn'+d).style.display = "none"
+                }
+                "{%endfor%}"
+              }
+            </script>
+            {%endif%}
+            {%endfor%}
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+</script>
+{% endblock %} 

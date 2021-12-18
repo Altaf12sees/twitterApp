@@ -1,0 +1,93 @@
+{% extends 'base.html' %} {% block content %}
+
+<!-- page section start -->
+<section>
+  <div class="container">
+
+      <!-- First row -->
+    <div class="row">
+      <div class="col-md-12 col-centered">
+        <h2 class="mt-3 mb-3">Search Tweets</h2>
+      </div>
+    </div>
+
+    <!-- 2nd row -->
+    <div class="row">
+        <div class="col-sm-12 pull-right">
+            <form method="get">
+                <select class="form-control" name="follower_filter" onchange="this.form.submit();">
+                    <option value="all">Filter by following</option>
+                    {% for i in get_followers_list %}
+                        <option value="{{ i.user }}" 
+                        {% if selected == i.user %} selected=selected "{% endif %}>{{ i.user }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            <p>search result for " {{search_filter}} "</p>
+        </div>
+    </div>
+
+    <!-- 3rd row -->
+    <div class="row">
+        <div class="col-sm-12 pull-right">
+            <input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for tweets.." title="Type in a name">
+        </div>
+    </div>
+    <br>
+
+    <!-- 4th row -->
+    <div class="row">
+        <div class="col-sm-12 pull-right">
+            <table id="myTable" class="table">
+                <thead>
+                    <th>Sr.#</th>
+                    <th>Tweet</th>
+                    <th>Date/Time</th>
+                    <th>User</th>
+                </thead>
+                <tbody>
+                    {% for i in get_filter_tweets %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{i.tweet_body}}</td>
+                        <td>{{i.created_date}}</td>
+                        <td>{{i.user}}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</section>
+<!-- page section end -->
+
+<!-- Javascript code start -->
+<script>
+    function myFunction() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            th = table.getElementsByTagName("th");
+        for (i = 1; i < tr.length; i++) {
+            for(j=0; j < th.length; j++){
+                td = tr[i].getElementsByTagName("td")[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        break;
+                        }else{
+                            tr[i].style.display = "none";
+                            }
+                    }       
+            }
+        }
+    }
+</script>
+<!-- javascript code end -->
+
+{% endblock %}
